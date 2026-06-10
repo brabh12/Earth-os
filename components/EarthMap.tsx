@@ -140,6 +140,24 @@ export default function EarthMap({ issues = [], onRegionSelect }: EarthMapProps)
           />
         </Overlay>
 
+        <style jsx global>{`
+          .leaflet-popup-content-wrapper {
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border);
+            border-radius: 0;
+            padding: 0;
+            color: white;
+          }
+          .leaflet-popup-tip {
+            background: #0a0a0a;
+          }
+          .leaflet-popup-content {
+            margin: 0;
+            padding: 0;
+          }
+        `}</style>
+
         <Overlay checked name="Anomalies">
           <LayerGroup>
             {issues.map((issue) => (
@@ -154,18 +172,43 @@ export default function EarthMap({ issues = [], onRegionSelect }: EarthMapProps)
                 })}
               >
                 <Popup className="nasa-popup">
-                  <div className="panel" style={{ minWidth: '200px', padding: '10px' }}>
-                    <div className="panel-header" style={{ margin: '-10px -10px 10px -10px' }}>
+                  <div className="panel" style={{ minWidth: '220px', padding: '10px' }}>
+                    <div className="panel-header" style={{ margin: '-10px -10px 10px -10px', color: `var(--accent-${issue.severity})` }}>
                       <span>ANOMALY DETECTED</span>
+                      <span style={{ fontSize: '0.6rem' }}>[{issue.severity.toUpperCase()}]</span>
                     </div>
-                    <p style={{ fontSize: '0.9rem', marginBottom: '5px' }}><strong>Type:</strong> {issue.type.toUpperCase()}</p>
-                    <p style={{ fontSize: '0.8rem', color: '#888' }}>{issue.explanation}</p>
+                    <div style={{ padding: '5px 0' }}>
+                      <p style={{ fontSize: '0.9rem', marginBottom: '8px' }}>
+                        <strong style={{ color: 'var(--accent-info)' }}>TYPE:</strong> {issue.type.toUpperCase()}
+                      </p>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '3px', marginBottom: '10px', padding: '8px', background: 'rgba(0,0,0,0.3)', borderRadius: '4px', fontSize: '0.75rem', fontFamily: 'var(--font-mono)' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                          <span style={{ color: '#666' }}>LAT:</span>
+                          <span style={{ color: 'var(--foreground)' }}>{issue.latitude.toFixed(6)}</span>
+                        </div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                          <span style={{ color: '#666' }}>LNG:</span>
+                          <span style={{ color: 'var(--foreground)' }}>{issue.longitude.toFixed(6)}</span>
+                        </div>
+                      </div>
+                      <p style={{ fontSize: '0.8rem', color: '#aaa', lineHeight: '1.4', marginBottom: '10px' }}>
+                        {issue.explanation}
+                      </p>
+                    </div>
                     <button 
-                      className="panel-header" 
-                      style={{ width: '100%', marginTop: '10px', justifyContent: 'center', cursor: 'pointer' }}
+                      className="panel" 
+                      style={{ 
+                        width: '100%', 
+                        padding: '8px', 
+                        fontSize: '0.75rem', 
+                        background: 'var(--accent-primary)', 
+                        color: 'white',
+                        fontWeight: 'bold',
+                        cursor: 'pointer' 
+                      }}
                       onClick={() => onRegionSelect?.(issue)}
                     >
-                      VIEW DETAILS
+                      INITIALIZE AI SCAN
                     </button>
                   </div>
                 </Popup>

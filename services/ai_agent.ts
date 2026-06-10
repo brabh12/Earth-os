@@ -36,9 +36,11 @@ export const EarthIntelligenceAgent = {
       You MUST respond with a valid JSON object in this EXACT format:
       {
         "title": "Short Impactful Title",
-        "description": "Clear step-by-step 3-stage plan",
-        "resources_needed": ["Real Resource 1", "Real Resource 2", "Real Resource 3"],
-        "impact_estimate": "Estimated recovery time and CO2 sequestration"
+        "description": "A comprehensive 3-stage environmental intervention strategy",
+        "resources_needed": ["Equipment 1", "Equipment 2", "Equipment 3"],
+        "estimated_volunteers": 50,
+        "estimated_cost_usd": 15000,
+        "impact_estimate": "Estimated recovery time and CO2 sequestration in MT"
       }
     `;
 

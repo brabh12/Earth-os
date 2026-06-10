@@ -21,6 +21,7 @@ import AIInsights from './AIInsights';
 import VerificationPortal from './VerificationPortal';
 import { AnomalySimulator } from '../services/AnomalySimulator';
 import { supabase } from '../lib/supabase';
+import { generateMissionPDF } from '../lib/pdfGenerator';
 
 // Dynamic import for the map to avoid SSR issues
 const EarthMap = dynamic(() => import('./EarthMap'), { ssr: false });
@@ -90,11 +91,11 @@ export default function Dashboard() {
         body: JSON.stringify({ issue }),
       });
       const data = await res.json();
-      setSolution(data || {
-        title: "ANALYSIS ERROR",
-        description: "Communication link to Groq Core timed out. Deploying default regional recovery protocol.",
-        resources_needed: ["Local Water Supplies", "Field Personnel", "Tactical Monitoring"]
-      });
+      setSolution(data);
+      if (data && issue) {
+        generateMissionPDF(data, issue);
+        setSystemLogs(prev => [`[ALERT] AI Strategy finalized. PDF Report initiated.`, ...prev].slice(0, 50));
+      }
     } catch (error) {
       console.error('AI Analysis failed:', error);
       setSolution({
@@ -107,17 +108,32 @@ export default function Dashboard() {
     }
   };
 
+  const handleDownloadReport = () => {
+    if (solution && selectedIssue) {
+      generateMissionPDF(solution, selectedIssue);
+      setSystemLogs(prev => [`[SYSTEM] PDF Report generated for mission: ${solution.title?.toUpperCase()}`, ...prev].slice(0, 50));
+    }
+  };
+
   const handleCreateMission = () => {
     if (!solution) return;
     const newMission = {
       ...solution,
       id: Math.random().toString(36).substr(2, 9),
       issue_id: selectedIssue.id,
-      status: 'active',
+      status: 'pending',
       volunteers: 0
     };
     setMissions(prev => [newMission, ...prev]);
+    setSystemLogs(prev => [`[STRATEGY] New mission created: ${newMission.title?.toUpperCase()}`, ...prev].slice(0, 50));
     setActiveTab('missions');
+  };
+
+  const handleDeployMission = (missionId: string) => {
+    setMissions(prev => prev.map(m => 
+      m.id === missionId ? { ...m, status: 'deployed', volunteers: Math.floor(Math.random() * 12) + 5 } : m
+    ));
+    setSystemLogs(prev => [`[COMMAND] Tactical deployment confirmed for mission ID ${missionId.toUpperCase()}`, ...prev].slice(0, 50));
   };
 
   if (!mounted) return <div style={{ background: '#0a0a0a', height: '100vh' }} />;
@@ -244,19 +260,38 @@ export default function Dashboard() {
                     <div className="panel-header">MISSION: {mission.title?.toUpperCase()}</div>
                     <div style={{ padding: '20px' }}>
                       <p style={{ fontSize: '0.9rem', marginBottom: '15px' }}>{mission.description}</p>
-                      <div style={{ fontSize: '0.8rem', color: '#888', marginBottom: '20px' }}>
-                        <strong>RESOURCES ALLOCATED:</strong>
-                        <ul style={{ marginTop: '5px' }}>
-                          {mission.resources_needed?.map((res: string, i: number) => (
-                            <li key={i}>{res}</li>
-                          ))}
-                        </ul>
+                      <div style={{ fontSize: '0.8rem', color: '#888', marginBottom: '20px', display: 'flex', justifyContent: 'space-between' }}>
+                        <div>
+                          <strong>RESOURCES ALLOCATED:</strong>
+                          <ul style={{ marginTop: '5px' }}>
+                            {mission.resources_needed?.map((res: string, i: number) => (
+                              <li key={i}>{res}</li>
+                            ))}
+                          </ul>
+                        </div>
+                        <div style={{ textAlign: 'right' }}>
+                          <p style={{ color: 'var(--accent-info)', fontWeight: 'bold' }}>{mission.volunteers} VOLUNTEERS</p>
+                          <p style={{ fontSize: '0.7rem', opacity: 0.6 }}>STATUS: {mission.status?.toUpperCase()}</p>
+                        </div>
                       </div>
                       <div style={{ display: 'flex', gap: '10px' }}>
-                        <button className="panel" style={{ flex: 1, padding: '12px', background: 'var(--accent-success)', color: 'black', fontWeight: 'bold' }}>
-                          DEPLOY TO FIELD
+                        <button 
+                          className="panel" 
+                          disabled={mission.status === 'deployed'}
+                          onClick={() => handleDeployMission(mission.id)}
+                          style={{ 
+                            flex: 1, 
+                            padding: '12px', 
+                            background: mission.status === 'deployed' ? 'transparent' : 'var(--accent-success)', 
+                            color: mission.status === 'deployed' ? 'var(--accent-success)' : 'black', 
+                            fontWeight: 'bold',
+                            opacity: mission.status === 'deployed' ? 0.7 : 1,
+                            borderColor: mission.status === 'deployed' ? 'var(--accent-success)' : 'transparent'
+                          }}
+                        >
+                          {mission.status === 'deployed' ? 'DEPLOYMENT ACTIVE' : 'DEPLOY TO FIELD'}
                         </button>
-                        <button className="panel" style={{ flex: 1, padding: '12px', background: 'transparent' }} onClick={() => { setSelectedIssue({ id: mission.issue_id }); setActiveTab('overview'); }}>
+                        <button className="panel" style={{ flex: 1, padding: '12px', background: 'transparent' }} onClick={() => { setSelectedIssue({ id: mission.issue_id }); setActiveTab('issues'); }}>
                           VERIFY IMPACT
                         </button>
                       </div>
@@ -329,7 +364,7 @@ export default function Dashboard() {
                   {selectedIssue ? (
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
                       <div className="panel-header" style={{ color: 'var(--accent-info)' }}>AI COMMAND CONSOLE</div>
-                      <AIInsights issue={selectedIssue} solution={solution} loading={loadingAI} />
+                      <AIInsights issue={selectedIssue} solution={solution} loading={loadingAI} onDownloadReport={handleDownloadReport} />
                       <VerificationPortal issueId={selectedIssue.id} />
                     </div>
                   ) : (

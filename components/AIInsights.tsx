@@ -6,9 +6,10 @@ interface AIInsightsProps {
   issue: any;
   solution?: any;
   loading?: boolean;
+  onDownloadReport?: () => void;
 }
 
-export default function AIInsights({ issue, solution, loading }: AIInsightsProps) {
+export default function AIInsights({ issue, solution, loading, onDownloadReport }: AIInsightsProps) {
   if (loading) {
     return (
       <div className="panel" style={{ height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column', gap: '15px', padding: '40px' }}>
@@ -46,7 +47,19 @@ export default function AIInsights({ issue, solution, loading }: AIInsightsProps
           <div className="panel" style={{ padding: '12px' }}>
             <h5 style={{ fontSize: '0.7rem', color: '#888', marginBottom: '5px' }}>RECOVERY PROJECTION</h5>
             <div className="data-value" style={{ fontSize: '1.2rem', color: 'var(--accent-warning)' }}>
-              +{(Math.random() * 15 + 5).toFixed(1)}% / Mo
+              {solution?.impact_estimate ? solution.impact_estimate.substring(0, 15) : '+12.4% / Mo'}
+            </div>
+          </div>
+          <div className="panel" style={{ padding: '12px' }}>
+            <h5 style={{ fontSize: '0.7rem', color: '#888', marginBottom: '5px' }}>EST. PERSONNEL</h5>
+            <div className="data-value" style={{ fontSize: '1.2rem', color: 'var(--accent-primary)' }}>
+              {solution?.estimated_volunteers || 0} UNITS
+            </div>
+          </div>
+          <div className="panel" style={{ padding: '12px' }}>
+            <h5 style={{ fontSize: '0.7rem', color: '#888', marginBottom: '5px' }}>EST. BUDGET</h5>
+            <div className="data-value" style={{ fontSize: '1.2rem', color: 'var(--accent-success)' }}>
+              ${(solution?.estimated_cost_usd || 0).toLocaleString()}
             </div>
           </div>
         </div>
@@ -69,6 +82,16 @@ export default function AIInsights({ issue, solution, loading }: AIInsightsProps
               <p style={{ fontSize: '0.7rem', fontStyle: 'italic', color: '#555' }}>Awaiting resource allocation...</p>
             )}
           </div>
+          
+          {solution && (
+            <button 
+              className="panel" 
+              onClick={onDownloadReport}
+              style={{ width: '100%', marginTop: '20px', padding: '10px', background: 'transparent', border: '1px solid var(--accent-info)', color: 'var(--accent-info)', fontSize: '0.7rem', fontWeight: 'bold' }}
+            >
+              DOWNLOAD MISSION REPORT (PDF)
+            </button>
+          )}
         </div>
       </div>
     </div>
