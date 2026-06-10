@@ -33,13 +33,13 @@ export const EarthIntelligenceAgent = {
       Type: ${issue.type} | Severity: ${issue.severity} | Location: ${issue.latitude}, ${issue.longitude}
       Explanation: ${issue.explanation}
       
-      You MUST respond with a valid JSON object in this EXACT format:
+      You MUST respond with a valid JSON object in this EXACT format. Ensure the "estimated_volunteers" and "estimated_cost_usd" are dynamically calculated based on the SEVERITY and SCALE of the problem (e.g., millions of dollars for critical global threats, thousands for local minor issues):
       {
         "title": "Short Impactful Title",
         "description": "A comprehensive 3-stage environmental intervention strategy",
         "resources_needed": ["Equipment 1", "Equipment 2", "Equipment 3"],
-        "estimated_volunteers": 50,
-        "estimated_cost_usd": 15000,
+        "estimated_volunteers": 0, 
+        "estimated_cost_usd": 0,
         "impact_estimate": "Estimated recovery time and CO2 sequestration in MT"
       }
     `;
@@ -54,8 +54,10 @@ export const EarthIntelligenceAgent = {
       // Return a realistic fallback if AI fails
       return {
         title: "EMERGENCY PROTOCOL ALPHA",
-        description: "OpenRouter Link failed. Deploying standard regional intervention: Establish perimeter, initialize water recycling, and coordinate with local monitoring stations.",
+        description: "OpenRouter Link failed. Deploying standard local intervention: Establish perimeter and coordinate with regional monitoring stations.",
         resources_needed: ["Water Filtration", "Soil Stabilization", "Volunteer Transport"],
+        estimated_volunteers: 45,
+        estimated_cost_usd: 12500,
         impact_estimate: "15% recovery over 3 months"
       };
     }

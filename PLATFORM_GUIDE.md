@@ -70,6 +70,9 @@ An internal engine that scans the globe for specific signatures (UV shifts, heat
 ### **Confidence Score (%)**
 *   How certain the AI is that an anomaly is real and not a sensor artifact. 90%+ is considered "Actionable Intelligence."
 
+### **OPERATIVES (Personnel)**
+*   **In Earth OS**: Refers to the recommended number of individuals (volunteers, scientists, or workers) required for a mission. This number is estimated by AI to ensure the intervention team is sufficiently sized for the specific geographic challenge.
+
 ### **Global Stability Index (%)**
 *   **In Earth OS**: A weighted average of planetary health, taking into account current air pollution, CO2 levels, deforestation rates, and active anomalies. A score below 70% triggers an automated "Planetary Alert."
 

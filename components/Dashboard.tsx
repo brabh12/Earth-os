@@ -122,7 +122,7 @@ export default function Dashboard() {
       id: Math.random().toString(36).substr(2, 9),
       issue_id: selectedIssue.id,
       status: 'pending',
-      volunteers: 0
+      volunteers: solution.estimated_volunteers || 0
     };
     setMissions(prev => [newMission, ...prev]);
     setSystemLogs(prev => [`[STRATEGY] New mission created: ${newMission.title?.toUpperCase()}`, ...prev].slice(0, 50));
@@ -398,7 +398,7 @@ export default function Dashboard() {
                 <div className="panel">
                   <div className="panel-header">AI PROCESSING LOAD</div>
                   <div style={{ padding: '20px' }}>
-                    <h2 className="data-value" style={{ fontSize: '2.5rem', margin: '10px 0' }}>12.4 TFLOPS</h2>
+                    <h2 className="data-value pulse" style={{ fontSize: '2.5rem', margin: '10px 0', color: 'var(--accent-info)' }}>12.4 TFLOPS</h2>
                     <p style={{ color: 'var(--accent-info)', fontSize: '0.8rem' }}>AUTONOMOUS SCANNING ENABLED</p>
                   </div>
                 </div>

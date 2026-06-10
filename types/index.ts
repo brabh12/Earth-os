@@ -36,9 +36,10 @@ export interface Mission {
   title: string;
   description: string;
   resources_needed: string[];
-  status: 'open' | 'active' | 'completed';
   impact_estimate: string;
-  volunteer_count: number;
+  estimated_volunteers: number;
+  estimated_cost_usd: number;
+  status: 'open' | 'active' | 'completed' | 'pending' | 'deployed';
 }
 
 export interface Report {

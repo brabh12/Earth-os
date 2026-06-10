@@ -53,7 +53,7 @@ export default function AIInsights({ issue, solution, loading, onDownloadReport 
           <div className="panel" style={{ padding: '12px' }}>
             <h5 style={{ fontSize: '0.7rem', color: '#888', marginBottom: '5px' }}>EST. PERSONNEL</h5>
             <div className="data-value" style={{ fontSize: '1.2rem', color: 'var(--accent-primary)' }}>
-              {solution?.estimated_volunteers || 0} UNITS
+              {solution?.estimated_volunteers || 0} OPERATIVES
             </div>
           </div>
           <div className="panel" style={{ padding: '12px' }}>
