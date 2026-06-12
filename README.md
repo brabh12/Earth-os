@@ -1,6 +1,6 @@
 # 🌍 Earth OS | Planetary Intelligence Network
 
-![Earth OS Banner](https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop)
+![Earth OS Banner](https://kommodo.ai/i/1x1xeySbRybJVQJ7OErV)
 
 > **"Translate Satellite Telemetry into Tactical Environmental Action."**
 
