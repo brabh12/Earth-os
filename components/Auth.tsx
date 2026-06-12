@@ -4,7 +4,11 @@ import { useState } from 'react';
 import { supabase } from '../lib/supabase';
 import { Globe, Shield, Lock, Mail } from 'lucide-react';
 
-export default function Auth() {
+interface AuthProps {
+  onNotify?: (message: string, type: 'success' | 'error' | 'info') => void;
+}
+
+export default function Auth({ onNotify }: AuthProps) {
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -15,17 +19,39 @@ export default function Auth() {
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    setError(null);
+
     if (isSignUp && password !== confirmPassword) {
-      setError('Passwords do not match');
+      const msg = 'Passwords do not match';
+      setError(msg);
+      if (onNotify) onNotify(msg, 'error');
       setLoading(false);
       return;
     }
 
-    const { error } = isSignUp 
-      ? await supabase.auth.signUp({ email, password })
+    const { data, error: authError } = isSignUp 
+      ? await supabase.auth.signUp({ 
+          email, 
+          password,
+          options: {
+            data: {
+              full_name: email.split('@')[0],
+            }
+          }
+        })
       : await supabase.auth.signInWithPassword({ email, password });
 
-    if (error) setError(error.message);
+    if (authError) {
+      setError(authError.message);
+      if (onNotify) onNotify(authError.message, 'error');
+    } else {
+      if (isSignUp) {
+        if (onNotify) onNotify('ACCOUNT PROTOCOL INITIALIZED. PLEASE CHECK EMAIL FOR VERIFICATION OR PROCEED TO LOGIN.', 'success');
+      } else {
+        // Logged in successfully
+        if (onNotify) onNotify('AUTHENTICATION SUCCESSFUL. LOADING PLANETARY INTERFACE...', 'success');
+      }
+    }
     setLoading(false);
   };
 
